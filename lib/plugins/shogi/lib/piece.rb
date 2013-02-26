@@ -1,3 +1,4 @@
+# encoding: utf8
 # Copyright (c) 2009 Paolo Capriotti <p.capriotti@gmail.com>
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -11,28 +12,27 @@ require_bundle 'shogi', 'type'
 module Shogi
 
 class Piece < Chess::Piece
-  TYPES = { 'P' => :pawn,
-            'R' => :rook,
-            'B' => :bishop,
-            'N' => :horse,
-            'G' => :gold,
-            'S' => :silver, 
-            'L' => :lance,
-            'K' => :king }
+  TYPES = { '歩' => :pawn,
+            '飛' => :rook,
+            '角' => :bishop,
+            '桂' => :horse,
+            '金' => :gold,
+            '銀' => :silver,
+            '香' => :lance,
+            '王' => :king }
   SYMBOLS = TYPES.invert
   
   def self.type_from_symbol(sym)
-    promoted = sym[0,1] == '+'
-    sym = sym[1..-1] if promoted
-    type = TYPES[sym.upcase]
-    type = Promoted.new(type) if promoted
-    type
+    TYPES[sym] || Promoted.type_from_symbol(sym)
   end
   
   def self.symbol(type)
     base_type = Promoted.demote(type)
-    result = SYMBOLS[base_type] || '?'
-    result = '+' + result if Promoted.promoted?(type)
+    if Promoted.promoted?(type)
+      result = type.symbol || '?'
+	else
+      result = SYMBOLS[base_type] || '?'
+    end
     result
   end
 end
