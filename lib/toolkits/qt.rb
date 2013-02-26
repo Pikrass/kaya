@@ -70,7 +70,7 @@ class Qt::Image
   # 
   def self.painted(size, &blk)
     Qt::Image.new(size.x, size.y, Qt::Image::Format_ARGB32_Premultiplied).tap do |img|
-      img.fill(0)
+      img.fill(Qt::Color.new(0, 0, 0, 0))
       Qt::Painter.new(img).paint(&blk)
     end
   end
