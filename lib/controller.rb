@@ -70,7 +70,7 @@ class Controller
       clock.stop
     end
     
-    @board.on(:click) {|p| on_board_click(p) }
+    @board.on(:click) {|data| on_board_click(data) }
     @board.on(:drag) {|data| on_board_drag(data) }
     @board.on(:drop) {|data| on_board_drop(data) }
     @pools.each do |col, pool|
@@ -199,7 +199,7 @@ class Controller
     update_pools
   end
   
-  def on_board_click(p)
+  def on_board_click(data)
     return unless match
     return unless match.started?
     state = match.history.state
@@ -209,15 +209,15 @@ class Controller
       case policy.movable?(match.history.state, @board.selection)
       when :movable
         # move directly
-        execute_move(@board.selection, p)
+        execute_move(@board.selection, data[:pos], :special => data[:shift])
       when :premovable
         # schedule a premove on the board
-        @premover.move(@current, @board.selection, p)
+        @premover.move(@current, @board.selection, data[:pos])
       end
       @board.selection = nil
-    elsif movable?(state, p)
+    elsif movable?(state, data[:pos])
       # only set selection
-      @board.selection = p
+      @board.selection = data[:pos]
     end
   end
   
@@ -236,7 +236,8 @@ class Controller
         # normal move/premove
         case policy.movable?(match.history.state, data[:src])
         when :movable
-          move = execute_move(data[:src], data[:dst], :adjust => true)
+          move = execute_move(data[:src], data[:dst], :adjust => true,
+                                                      :special => data[:shift])
         when :premovable
           @premover.move(@current, data[:src], data[:dst])
         end

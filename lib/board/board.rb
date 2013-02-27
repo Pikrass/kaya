@@ -96,9 +96,9 @@ class Board < Qt::GraphicsItemGroup
     item
   end
   
-  def on_click(pos)
-    p = to_logical(pos)
-    fire :click => p
+  def on_click(pos, data = {})
+    data[:pos] = to_logical(pos)
+    fire :click => data
   end
   
   def on_drag(pos)

@@ -15,10 +15,19 @@ class Scene < Qt::GraphicsScene
     super
     self.background_brush = $qApp.palette.brush(Qt::Palette::Window)
     @elements = []
+	@shift = false
   end
 
   def add_clickable_element(element)
     @elements << element
+  end
+
+  def keyPressEvent e
+    @shift = true if e.key == Qt::Key_Shift
+  end
+
+  def keyReleaseEvent e
+    @shift = false if e.key == Qt::Key_Shift
   end
   
   def mousePressEvent(e)
@@ -35,7 +44,7 @@ class Scene < Qt::GraphicsScene
       if @drag_data
         old_pos = @drag_data[:pos]
         item = @drag_data[:item]
-        data = @drag_data
+        data = @drag_data.merge({:shift => @shift })
         @drag_data = nil
         
         pos = e.scene_pos.to_i
@@ -58,7 +67,7 @@ class Scene < Qt::GraphicsScene
             if src and
                same_square(element_dst, src, pos) and
                (not data[:item])
-              notify(element_dst, :click, [pos])
+              notify(element_dst, :click, [pos], :shift => @shift)
             else
               notify(element_dst, :drop, [src, pos], data)
             end
@@ -67,7 +76,7 @@ class Scene < Qt::GraphicsScene
           # close drag and drop == click, unless
           # old_pos and pos fall on different squares
           if same_square(element_src, old_pos, pos)
-            notify(element_dst, :click, [pos])
+            notify(element_dst, :click, [pos], :shift => @shift)
           end
         else
           # a rapid drag and drop between different elements

@@ -8,7 +8,7 @@
 module Executor
   def execute_move(src, dst, opts = { })
     state = match.history.state
-    move = policy.new_move(state, src, dst)
+    move = policy.new_move(state, src, dst, :special => opts[:special])
     validate = match.game.validator.new(state)
     if validate[move]
       perform!(move, opts)

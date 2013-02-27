@@ -19,7 +19,7 @@ class Policy < Chess::Policy
   end
   
   def new_move(state, src, dst, opts = {})
-    promote = @autopromote
+    promote = @autopromote ^ (opts[:special] || false)
     move = @move_factory.new(src, dst, opts.merge(:promote => promote))
     valid = @validator_factory.new(state)
     move = @move_factory.new(src, dst, opts.merge(:promote => !promote)) unless valid[move]

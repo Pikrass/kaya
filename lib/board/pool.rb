@@ -90,7 +90,7 @@ class Pool < Qt::GraphicsItemGroup
     item
   end
   
-  def on_click(pos)
+  def on_click(pos, data = {})
     
   end
   
